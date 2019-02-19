@@ -1,0 +1,24 @@
+.page-hat {
+    width: 100%;
+    padding:10px;
+}
+
+.page-hat-text {
+    margin-left: 20px;
+    width: 30%;
+}
+
+.container1 {
+    margin: 30px;
+}
+
+.app-status-container {
+    float: right;
+    align-self: right;
+    border-style: double;    
+    width: 30%;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+

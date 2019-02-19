@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WebMonitoringTool</title>
+    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" >
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs/dt-1.10.16/datatables.min.js"></script>
+</head>
+<body>
+    <div class="page-hat">
+        <h1 class="page-hat-text">WebSite Monitor App</h3>
+        <div class="app-status-container">
+            <p>Connection Status : <span>OK</span></p>
+            <p>Time : <span id="clock">19-02-2019T12:02:40.2</span></p>
+            <p>Monitoring Started : <span id="timeStarted">19-02-2019T10:21:30.5</span></p>
+            <p>WebSites currenly on track : <span id="onlineNumber">3</span></p>
+        </div>
+    </div>
+    <div>
+        <div class="container1">
+            <h3>WebSites Monitoring Display</h3>
+            <table id="resultsTable" class="display" style="width:100%; max-height: 400px;">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Url Address</th>
+                        <th>State</th>
+                        <th>Timestamp</th>
+                        <th>Resposnse Time</th>
+                        <th>Response Size</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="resultsTbody">
+                    <tr>
+                        <td>Name</td>
+                        <td>https://www.w3schools.com/html/html_css.asp</td>
+                        <td>OK</td>
+                        <td>19-02-2019T10:21:30.5</td>
+                        <td>123</td>
+                        <td>700KB</td>
+                        <td>Running</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <div class="container1">
+                <table id="webSitesTable" class="display" style="width:100%; max-height: 400px;">
+                    <thead>
+                        <h3>WebSites For Monitoring</h3>
+                        <tr>
+                            <th>Name</th>
+                            <th>Url Address</th>
+                            <th>Start Date</th>
+                            <th>Last Check</th>
+                            <th>Response Delay</th>
+                            <th>Size Bounds</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="websitesTbody">
+                        <tr>
+                            <td>Name</td>
+                            <td>https://www.w3schools.com/html/html_css.asp</td>
+                            <td>19-02-2019T10:21:30.5</td>
+                            <td>19-02-2019T10:21:30.5</td>
+                            <td>1234ms</td>
+                            <td>500 - 1500 (KB)</td>
+                            <td>Running</td>
+                        </tr>
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div>
+            <div class="container1">
+                <div id="add-website" class="row">
+                    <!-- <div class="col-sm-6"> -->
+                        <form>
+                            <h4>Add WebSite For Monitoring</h4>
+    
+                            <label>Website Name<span class="required">*</span></label>
+                            <input type="text" name="field1" class="field-divided" placeholder="Name" />
+
+                            <label>Website Url<span class="required">*</span></label>
+                            <input type="text" name="field1" class="field-divided" placeholder="URL" />
+
+                            <label>Monitoring Frequency<span class="required">*</span></label>
+                            <input type="email" name="field3" class="field-long" placeholder="Time in seconds (s)"/>
+    
+                            <label>Expected Response Size<span class="required">*</span></label>
+                            <input type="email" name="field3" class="field-long" placeholder="Resoponse Size (KB)"/>
+                            <input type="submit" value="Add" />
+                        </form>
+                    </div>
+                <!-- </div> -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script src="main.js"></script>
+
+</body>
+</html>
