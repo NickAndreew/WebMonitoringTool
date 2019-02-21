@@ -1,6 +1,5 @@
 package web.monitoring.api.models.requests;
 
-import web.monitoring.dbmanager.model.WebSiteCheckResult;
 import web.monitoring.dbmanager.model.WebSiteForMonitoring;
 
 import lombok.NoArgsConstructor;
@@ -13,7 +12,7 @@ import org.springframework.lang.NonNull;
 public class RequestMessage {
 
     public enum MessageType {
-        INFO, CONNECTED, DISCONNECTED, ADD_WEBSITE,
+        CONNECTED, ADD_WEBSITE,
         REMOVE_WEBSITE, PAUSE_MONITOR, CONTINUE_MONITOR
     }
 
@@ -21,7 +20,6 @@ public class RequestMessage {
     private MessageType type;
     private String context;
     private WebSiteForMonitoring webSiteForMonitoring;
-    private WebSiteCheckResult webSiteCheckResult;
 
     public MessageType getType() {
         return type;

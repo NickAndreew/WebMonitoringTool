@@ -4,7 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Id;
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Version;
 
 @ToString
 @NoArgsConstructor
@@ -23,6 +29,8 @@ public class WebSiteForMonitoring {
     private String name;
     @Column(name="url")
     private String url;
+    @Column(name="startDate")
+    private String startDate;
     @Column(name="delayUpBound")
     private Long delayUpBound;
     @Column(name="delayLowBound")
@@ -56,6 +64,14 @@ public class WebSiteForMonitoring {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
     }
 
     public Long getDelayUpBound() {

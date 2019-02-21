@@ -3,12 +3,14 @@ package web.monitoring.api;
 import web.monitoring.api.models.responses.ResponseMessage;
 import web.monitoring.api.models.requests.RequestMessage;
 import web.monitoring.dbmanager.model.WebSiteCheckResult;
+import web.monitoring.dbmanager.model.WebSiteForMonitoring;
 import web.monitoring.monitor.MonitorManager;
 import web.monitoring.dbmanager.DBManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -24,19 +26,39 @@ public class WebSocketController {
     private DBManager dbManager;
     @Autowired
     private MonitorManager monitorManager;
-////////////////////////////////////////////////////////////////////////////     TEST
-    @MessageMapping("/getSomeResponse")
-    @SendTo("/monitor/public")
-    public ResponseMessage getSomeResponse(@Payload RequestMessage payload) {
-        ResponseMessage message = new ResponseMessage();
+    @Autowired
+    private SimpMessagingTemplate template;
 
-        // API TEST METHOD.....................................
-         dbManager.testDbAddWebSite();
-        logger.info("The message of TYPE '"+payload.getType()+"', with the following context '"+payload.getContext()+"' received.");
-        payload.setContext(dbManager.getMessageCheck());
+    @MessageMapping("/connected")
+    @SendTo("/monitor/public")
+    public ResponseMessage connected() {
+        ResponseMessage message = new ResponseMessage();
+        message.setType(ResponseMessage.MessageType.ALL_RESULTS_AND_WEBSITES);
+        message.setWebSitesForMonitoring(dbManager.getWebSitesForMonitoring());
+        message.setWebSitesChecksResults(dbManager.getWebSitesCheckResults());
         return message;
     }
-/////////////////////////////////////////////////////////////////////////////     TEST
+
+    @MessageMapping("/startMonitoring")
+    @SendTo("/monitor/public")
+    public ResponseMessage startMonitoring() {
+        monitorManager.initMonitoring();
+        ResponseMessage message = new ResponseMessage();
+        message.setType(ResponseMessage.MessageType.MONITORING_STARTED);
+        message.setContext("Monitoring Started");
+        return message;
+    }
+
+    @MessageMapping("/stopMonitoring")
+    @SendTo("/monitor/public")
+    public ResponseMessage stopMonitoring() {
+        monitorManager.stopMonitoring();
+        ResponseMessage message = new ResponseMessage();
+        message.setType(ResponseMessage.MessageType.MONITORING_STOPPED);
+        message.setContext("Monitoring Stopped");
+        return message;
+    }
+
     @MessageMapping("/addWebSite")
     @SendTo("/monitor/public")
     public ResponseMessage addWebSite(@Payload RequestMessage payload) {
@@ -44,6 +66,7 @@ public class WebSocketController {
         if(payload.getWebSiteForMonitoring()!=null){
             dbManager.saveNewWebSiteForMonitoring(payload.getWebSiteForMonitoring());
             monitorManager.addToMonitor(payload.getWebSiteForMonitoring());
+            sendNewWebSite(payload.getWebSiteForMonitoring());
 
             message.setType(ResponseMessage.MessageType.WEBSITE_ADDED);
             message.setWebSiteForMonitoring(payload.getWebSiteForMonitoring());
@@ -71,66 +94,27 @@ public class WebSocketController {
         return message;
     }
 
-    @MessageMapping("/pauseMonitoring")
+    @MessageMapping("/getAllWebSites")
     @SendTo("/monitor/public")
-    public ResponseMessage pauseMonitoring(@Payload RequestMessage payload) {
-        ResponseMessage message = new ResponseMessage();
-        if (payload.getWebSiteForMonitoring()!=null) {
-            monitorManager.stopMonitoring(payload.getWebSiteForMonitoring());
-
-            message.setType(ResponseMessage.MessageType.MONITOR_PAUSED);
-            message.setWebSiteForMonitoring(payload.getWebSiteForMonitoring());
-        } else {
-            message.setType(ResponseMessage.MessageType.ERROR);
-            message.setContext("Input payload did not contain website, please try again!");
-        }
-        return message;
-    }
-
-    @MessageMapping("/continueMonitoring")
-    @SendTo("/monitor/public")
-    public ResponseMessage continueMonitoring(@Payload RequestMessage payload) {
-        ResponseMessage message = new ResponseMessage();
-        if(payload.getWebSiteForMonitoring()!=null){
-            monitorManager.addToMonitor(payload.getWebSiteForMonitoring());
-
-            message.setType(ResponseMessage.MessageType.MONITOR_CONTINUED);
-            message.setWebSiteForMonitoring(payload.getWebSiteForMonitoring());
-        } else {
-            message.setType(ResponseMessage.MessageType.ERROR);
-            message.setContext("Input payload did not contain website, please try again!");
-        }
-        return message;
-    }
-
-    @MessageMapping("/getWebSitesForMonitoring")
-    @SendTo("/monitor/public")
-    public ResponseMessage getWebSitesForMonitoring() {
+    public ResponseMessage getAllWebSites(){
         ResponseMessage message = new ResponseMessage();
         message.setType(ResponseMessage.MessageType.ALL_WEBSITES);
+        message.setContext("All websites");
         message.setWebSitesForMonitoring(dbManager.getWebSitesForMonitoring());
         return message;
     }
 
-    @MessageMapping("/getWebSitesChecksResults")
-    @SendTo("/monitor/public")
-    public ResponseMessage getWebSitesChecksResults() {
+    public void sendNewCheckResult(WebSiteCheckResult website){
         ResponseMessage message = new ResponseMessage();
-        message.setType(ResponseMessage.MessageType.ALL_CHECK_RESULT);
-        message.setWebSitesChecksResults(dbManager.getWebSitesCheckResults());
-        return message;
+        message.setType(ResponseMessage.MessageType.NEW_CHECK_RESULT);
+        message.setWebSiteCheckResult(website);
+        template.convertAndSend("/monitor/public", message);
     }
 
-    @SendTo("/monitor/public")
-    public static ResponseMessage sendNewCheckResult(WebSiteCheckResult website){
+    public void sendNewWebSite(WebSiteForMonitoring website){
         ResponseMessage message = new ResponseMessage();
-        if(website!=null){
-            message.setType(ResponseMessage.MessageType.NEW_CHECK_RESULT);
-            message.setWebSiteCheckResult(website);
-        } else {
-            message.setType(ResponseMessage.MessageType.ERROR);
-            message.setContext("No website check result");
-        }
-        return message;
+        message.setType(ResponseMessage.MessageType.WEBSITE_ADDED);
+        message.setWebSiteForMonitoring(website);
+        template.convertAndSend("/monitor/public", message);
     }
 }

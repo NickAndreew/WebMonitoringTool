@@ -15,17 +15,17 @@ import java.util.List;
 public class ResponseMessage {
 
     public enum MessageType {
-        INFO, CONNECTED, DISCONNECTED, ERROR,
-        WEBSITE_ADDED, WEBSITE_REMOVED, MONITOR_PAUSED,
-        MONITOR_CONTINUED, ALL_WEBSITES,
-        ALL_CHECK_RESULT, NEW_CHECK_RESULT
+        ALL_RESULTS_AND_WEBSITES, ALL_WEBSITES,
+        WEBSITE_ADDED, WEBSITE_REMOVED,
+        MONITORING_STOPPED, MONITORING_STARTED,
+        NEW_CHECK_RESULT, ERROR
     }
 
     @NonNull
     private MessageType type;
     private String context;
-    private WebSiteCheckResult webSiteCheckResult;
     private WebSiteForMonitoring webSiteForMonitoring;
+    private WebSiteCheckResult webSiteCheckResult;
     private List<WebSiteCheckResult> webSitesChecksResults;
     private List<WebSiteForMonitoring> webSitesForMonitoring;
 
@@ -43,14 +43,6 @@ public class ResponseMessage {
 
     public void setContext(String context) {
         this.context = context;
-    }
-
-    public WebSiteCheckResult getWebSiteCheckResult() {
-        return webSiteCheckResult;
-    }
-
-    public void setWebSiteCheckResult(WebSiteCheckResult webSiteCheckResult) {
-        this.webSiteCheckResult = webSiteCheckResult;
     }
 
     public WebSiteForMonitoring getWebSiteForMonitoring() {
@@ -75,5 +67,13 @@ public class ResponseMessage {
 
     public void setWebSitesForMonitoring(List<WebSiteForMonitoring> webSitesForMonitoring) {
         this.webSitesForMonitoring = webSitesForMonitoring;
+    }
+
+    public WebSiteCheckResult getWebSiteCheckResult() {
+        return webSiteCheckResult;
+    }
+
+    public void setWebSiteCheckResult(WebSiteCheckResult webSiteCheckResult) {
+        this.webSiteCheckResult = webSiteCheckResult;
     }
 }

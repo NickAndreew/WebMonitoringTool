@@ -4,7 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Id;
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Version;
 
 @ToString
 @NoArgsConstructor
@@ -13,8 +19,19 @@ import javax.persistence.*;
 @Table(name = "websitecheckresult")
 public class WebSiteCheckResult {
 
+
     public enum Status {
-        OK, WARNING, CRITICAL
+        OK("OK"), WARNING("WARNING"), CRITICAL("CRITICAL");
+
+        private String value;
+
+        Status(String value){
+            this.value = value;
+        }
+
+        public String getValue(){
+            return this.value;
+        }
     }
 
     @Id
@@ -27,8 +44,8 @@ public class WebSiteCheckResult {
     private String name;
     @Column(name="url")
     private String url;
-    @Column(name="timestamp")
-    private String timeStamp;
+    @Column(name="checkTime")
+    private String checkTime;
     @Column(name="reponseStatus")
     private Status responseStatus;
     @Column(name="responseTime")
@@ -62,8 +79,12 @@ public class WebSiteCheckResult {
         this.url = url;
     }
 
-    public void setTimeStamp(String timeStamp){
-        this.timeStamp = timeStamp;
+    public String getCheckTime(){
+        return this.checkTime;
+    }
+
+    public void setCheckTime(String checkTime){
+        this.checkTime = checkTime;
     }
 
     public long getResponseTime() {

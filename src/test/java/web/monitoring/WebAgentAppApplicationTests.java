@@ -1,4 +1,4 @@
-package web.monitoring.WebAgentApp;
+package web.monitoring;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

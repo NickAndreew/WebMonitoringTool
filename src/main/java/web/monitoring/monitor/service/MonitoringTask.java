@@ -15,7 +15,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.Connection.Method;
 import org.jsoup.Connection.Response;
 
-public class MonitoringTask implements Runnable {
+public class MonitoringTask extends Thread {
 
     private static final Logger logger = LoggerFactory.getLogger(MonitoringTask.class);
     private DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy'T'HH:MM:SS");
@@ -41,12 +41,15 @@ public class MonitoringTask implements Runnable {
         WebSiteCheckResult result = new WebSiteCheckResult();
         result.setUrl(url);
         result.setName(website.getName());
-        result.setTimeStamp(dateFormat.format(date));
+        result.setCheckTime(dateFormat.format(date));
         result.setResponseStatus(WebSiteCheckResult.Status.CRITICAL);
 
         try {
             long t = System.currentTimeMillis();
-            Response response = Jsoup.connect(url).method(Method.GET).execute();
+            Response response = Jsoup.connect(url)
+                    .method(Method.GET)
+                    .timeout(5000)
+                    .execute();
             responseTime = System.currentTimeMillis() - t;
             responseSize = response.headers().entrySet().size() + response.bodyAsBytes().length;
             responseCode = (long) response.statusCode();

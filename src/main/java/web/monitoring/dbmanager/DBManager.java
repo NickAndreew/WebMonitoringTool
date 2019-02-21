@@ -5,12 +5,14 @@ import java.util.ArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import web.monitoring.dbmanager.model.WebSiteCheckResult;
 import web.monitoring.dbmanager.model.WebSiteForMonitoring;
 import web.monitoring.dbmanager.repositories.WebSiteCheckResultRepository;
 import web.monitoring.dbmanager.repositories.WebSiteForMonitoringRepository;
 
 import org.springframework.stereotype.Service;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,28 +28,8 @@ public class DBManager {
     private WebSiteForMonitoringRepository webSiteForMonitoringRepository;
     @Autowired
     private WebSiteCheckResultRepository checkResultsRepository;
-
-    @Deprecated
-    public static String getMessageCheck(){
-
-        return "SOME MESSAGE CHECK";
-    }
-
-    @Deprecated
-    public void testDbAddWebSite(){
-        WebSiteForMonitoring website = new WebSiteForMonitoring();
-        website.setName("RST");
-        website.setUrl("http://rst.ua/");
-        website.setDelayLowBound(0L);
-        website.setDelayUpBound(5000L);
-        website.setMonitorFrequency(3000L);
-        website.setSizeLowBound(0L);
-        website.setSizeUpBound(100000L);
-
-        webSiteForMonitoringRepository.save(website);
-
-        logger.info("\n "+website.getName()+" website has been added to DataBase! \n");
-    }
+    @Autowired
+    private SimpMessagingTemplate template;
 
     @Transactional
     public void saveNewWebSiteForMonitoring(WebSiteForMonitoring website){
@@ -65,8 +47,11 @@ public class DBManager {
 
     @Transactional
     public void deleteWebSiteForMonitoring(WebSiteForMonitoring website){
-        if(website!=null){
-            webSiteForMonitoringRepository.delete(website);
+        WebSiteForMonitoring site = webSiteForMonitoringRepository.findByUrl(website.getUrl());
+        if(site!=null){
+            webSiteForMonitoringRepository.delete(site);
+        } else {
+            logger.error("Couldn't find the website with the specified URL: "+website.getUrl()+" .");
         }
     }
 
@@ -79,7 +64,7 @@ public class DBManager {
         }
     }
 
-    public List<WebSiteCheckResult> getWebSitesCheckResults(){
+    public List<WebSiteCheckResult> getWebSitesCheckResults() {
         return checkResultsRepository.findAll();
     }
 }
